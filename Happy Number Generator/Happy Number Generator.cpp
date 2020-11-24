@@ -7,7 +7,12 @@
 #include <vector>
 #include <unordered_set>
 
-using namespace std;
+using std::string;
+using std::to_string;
+using std::vector;
+using std::unordered_set;
+using std::cout;
+using std::endl;
 
 int sum_of_squares(int n)
 {
@@ -79,16 +84,20 @@ int main()
 
     // Build up cache for all numbers n where (n <= sum_of_squares(99) = 163)
     for (; iterated_number < sum_of_squares(99); iterated_number++)
+    {
         if (is_happy_build_cache(iterated_number, happy_set, sad_set, happy_list))
         {
             happy_list.push_back(iterated_number);
             cout << happy_list.size() << ":\t" << iterated_number << endl;
         }
+    }
     // Use the cache of sad numbers to determine the happiness of all other numbers, building it up further as needed.
     for (; happy_list.size() < 10000; iterated_number++)
+    {
         if (is_happy_use_cache(iterated_number, sad_set))
         {
             happy_list.push_back(iterated_number);
             cout << happy_list.size() << ":\t" << iterated_number << endl;
         }
+    }
 }
