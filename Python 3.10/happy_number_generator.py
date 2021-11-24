@@ -1,34 +1,50 @@
-from time import perf_counter
+from typing import List
+
+import performance_print
 
 LENLIST = 10_000
+
+
+# def sum_of_squares(n: int) -> int:
+# 	return sum([int(i) ** 2 for i in str(n)])
+
+
+def sum_of_squares(n: int) -> int:
+	r = 0
+	while n:
+		r, n = r + (n % 10)**2, n // 10
+	return r
 
 
 def happy(n: int) -> bool:
 	past = set()
 	while n != 1:
-		n = sum(int(i) ** 2 for i in str(n))
+		n = sum_of_squares(n)
 		if n in past:
 			return False
 		past.add(n)
+		print(n)
 	return True
 
 
-def calculate_naive():
+@performance_print.last
+def calculate_naive() -> List:
 	happy_list = []
 	count = 1
 	while len(happy_list) < LENLIST:
 		if happy(count):
 			happy_list.append(count)
-			print(len(happy_list), ":\t", count)
 		count += 1
+	return happy_list
 
 
-def calculate_smart():
+@performance_print.all
+def calculate_smart() -> List:
 	happy_set = {1}
 	sad_set = {4}
 
-	def happy_smarter(n):
-		x = sum(int(i) ** 2 for i in str(n))
+	def happy_smarter(n: int):
+		x = sum_of_squares(n)
 		if x in sad_set:
 			sad_set.add(n)
 			return False
@@ -40,7 +56,7 @@ def calculate_smart():
 		past = set()
 		while n != 1:
 			past.add(n)
-			n = sum(int(i) ** 2 for i in str(n))
+			n = sum_of_squares(n)
 			if n in sad_set:
 				sad_set.update(past)
 				return False
@@ -48,37 +64,18 @@ def calculate_smart():
 		return True
 
 	happy_list = []
-	smart_dict = {}
-	smarter_dict = {}
 	count = 1
-	while len(smarter_dict) <= 200:
+	while len(happy_list) <= sum_of_squares(99):
 		if happy_smart(count):
-			smarter_dict[len(smarter_dict) + 1] = count
-			print(len(smarter_dict), ":\t", count)
+			happy_list.append(count)
 		count += 1
-	while len(smarter_dict) < LENLIST:
+	while len(happy_list) < LENLIST:
 		if happy_smarter(count):
-			smarter_dict[len(smarter_dict) + 1] = count
-			print(len(smarter_dict), ":\t", count)
+			happy_list.append(count)
 		count += 1
-
-	# count = 1
-	# while len(smart_dict) < LENLIST:
-	#     if happy_smart(count):
-	#         smart_dict[len(smart_dict) + 1] = count
-	#         print(len(smart_dict), ":\t", count)
-	#     count += 1
-
-	# try:
-	#     assert smarter_dict == smart_dict
-	# except AssertionError:
-	#     for i in range(1, LENLIST+1):
-	#         if smarter_dict[i] != smart_dict[i]:
-	#             print(f"Element {i} in smarter dict, {smarter_dict[i]}, does not match smart dict {smart_dict[i]}")
-	#             break
+	return happy_list
 
 
-start = perf_counter()
-calculate_smart()
-end = perf_counter()
-print(end - start)
+if __name__ == "__main__":
+	# calculate_naive()
+	calculate_smart()
