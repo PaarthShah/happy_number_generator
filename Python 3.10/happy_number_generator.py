@@ -23,7 +23,6 @@ def happy(n: int) -> bool:
 		if n in past:
 			return False
 		past.add(n)
-		print(n)
 	return True
 
 
@@ -65,7 +64,7 @@ def calculate_smart() -> List:
 
 	happy_list = []
 	count = 1
-	while len(happy_list) <= sum_of_squares(99):
+	while len(happy_list) <= 99:
 		if happy_smart(count):
 			happy_list.append(count)
 		count += 1

@@ -54,7 +54,7 @@ bool is_happy_use_cache(int n, unordered_set<int>& sad_set)
 {
     // Check whether the sum of the squares of the number's digits is known to be sad.
     // If it is sad, add the number to the sad cache.
-    // If it isn't sad, it must neccessarily be happy since the sad cache is guaranteed to contain all sad numbers < n at this point of execution.
+    // If it isn't sad, it must necessarily be happy since the sad cache is guaranteed to contain all sad numbers < n at this point of execution.
     int next = sum_of_squares(n);
     if (sad_set.contains(next))
     {
@@ -73,17 +73,14 @@ int main()
     // Initialize cache with trivial seed.
     unordered_set<int> happy_set({ 1 });
     unordered_set<int> sad_set({ 4 });
-    //unordered_set<int> happy_set, sad_set;
-    //happy_set.insert(1);
-    //sad_set.insert(4);
     vector<int> happy_list;
     int iterated_number = 1;
 
     // Smallest integer solution to the equation 81x <= 10^(x) - 1: x = 3.
     // QED: sum_of_squares(n) < n for all n >= 10^2 = 99
 
-    // Build up cache for all numbers n where (n <= sum_of_squares(99) = 163)
-    for (; iterated_number < sum_of_squares(99); iterated_number++)
+    // Build up cache for all two-digit numbers.
+    for (; iterated_number <= 99; iterated_number++)
     {
         if (is_happy_build_cache(iterated_number, happy_set, sad_set, happy_list))
         {
