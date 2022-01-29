@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-const finalLength uint = 10_000_000
+const finalLength uint = 10_000
 
 type HappyCache map[uint]bool
 
@@ -47,8 +47,6 @@ func main() {
 			happyList[happyCounter] = i
 			happyCache[i] = true
 			happyCounter += 1
-		} else {
-			happyCache[i] = false
 		}
 	}
 
@@ -57,8 +55,6 @@ func main() {
 			happyList[happyCounter] = i
 			happyCache[i] = true
 			happyCounter += 1
-		} else {
-			happyCache[i] = false
 		}
 	}
 
