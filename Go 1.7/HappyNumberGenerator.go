@@ -2,10 +2,9 @@ package main
 
 import "fmt"
 
-const LENLIST uint = 10_000_000
+const finalLength uint = 10_000_000
 
-// Happiness - true for happy, false for sad.
-type Happiness bool
+type HappyCache map[uint]bool
 
 func sumOfSquares(num uint) uint {
 	var sum uint = 0
@@ -17,7 +16,7 @@ func sumOfSquares(num uint) uint {
 	return sum
 }
 
-func isHappy(num uint) Happiness {
+func isHappyBuildup(num uint) bool {
 	haveSeen := map[uint]bool{
 		num: true,
 	}
@@ -32,15 +31,36 @@ func isHappy(num uint) Happiness {
 	return true
 }
 
+func isHappyCached(num uint, happyCache *HappyCache) bool {
+	num = sumOfSquares(num)
+	return (*happyCache)[num]
+}
+
 func main() {
-	happyList := make([]uint, LENLIST)
+	happyList := make([]uint, finalLength)
+	happyCache := make(HappyCache)
 	var happyCounter uint = 0
 	var i uint = 1
-	for ; happyCounter < LENLIST; i++ {
-		if isHappy(i) {
+
+	for ; i < 100; i++ {
+		if isHappyBuildup(i) {
 			happyList[happyCounter] = i
+			happyCache[i] = true
 			happyCounter += 1
+		} else {
+			happyCache[i] = false
 		}
 	}
-	fmt.Println(happyList[LENLIST-5:])
+
+	for ; happyCounter < finalLength; i++ {
+		if isHappyCached(i, &happyCache) {
+			happyList[happyCounter] = i
+			happyCache[i] = true
+			happyCounter += 1
+		} else {
+			happyCache[i] = false
+		}
+	}
+
+	fmt.Println(happyList[finalLength-5:])
 }
