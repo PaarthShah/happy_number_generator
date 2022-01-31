@@ -1,10 +1,10 @@
 package main
 
 import "fmt"
+import "sync"
 
-const finalLength uint = 10_000
-
-type HappyCache map[uint]bool
+const finalLength uint = 100_000
+const workerCount int = 8
 
 func sumOfSquares(num uint) uint {
 	var sum uint = 0
@@ -31,30 +31,49 @@ func isHappyBuildup(num uint) bool {
 	return true
 }
 
-func isHappyCached(num uint, happyCache *HappyCache) bool {
-	num = sumOfSquares(num)
-	return (*happyCache)[num]
+func isHappyCached(numbers <-chan uint, happyCache *sync.Map, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for num := range numbers {
+		newNum := sumOfSquares(num)
+		_, isHappy := (*happyCache).Load(newNum)
+		if isHappy {
+			(*happyCache).Store(num, true)
+		}
+	}
 }
 
 func main() {
 	happyList := make([]uint, finalLength)
-	happyCache := make(HappyCache)
+	var happyCache sync.Map
 	var happyCounter uint = 0
-	var i uint = 1
+	var i uint = 1 // Main iterator through the whole numbers.
 
-	for ; i < 100; i++ {
+	for ; i < 1000; i++ {
 		if isHappyBuildup(i) {
-			happyList[happyCounter] = i
-			happyCache[i] = true
-			happyCounter += 1
+			happyCache.Store(i, true)
 		}
 	}
 
-	for ; happyCounter < finalLength; i++ {
-		if isHappyCached(i, &happyCache) {
+	numbers := make(chan uint, finalLength*10)
+
+	for ; i < finalLength*10; i++ {
+		numbers <- i
+	}
+	close(numbers)
+
+	wg := new(sync.WaitGroup)
+	wg.Add(workerCount)
+
+	for x := 0; x < workerCount; x++ {
+		go isHappyCached(numbers, &happyCache, wg)
+	}
+	wg.Wait()
+
+	for i = 1; happyCounter < finalLength; i++ {
+		_, isHappy := happyCache.Load(i)
+		if isHappy {
 			happyList[happyCounter] = i
-			happyCache[i] = true
-			happyCounter += 1
+			happyCounter++
 		}
 	}
 
