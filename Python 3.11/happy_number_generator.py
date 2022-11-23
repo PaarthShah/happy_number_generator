@@ -6,14 +6,15 @@ LENLIST = 10_000
 
 
 # def sum_of_squares(n: int) -> int:
-# 	return sum([int(i) ** 2 for i in str(n)])
+# 	return sum(int(i) ** 2 for i in str(n))
 
 
 def sum_of_squares(n: int) -> int:
-	r = 0
+	total_sum = 0
 	while n:
-		r, n = r + (n % 10)**2, n // 10
-	return r
+		n, remainder = divmod(n, 10)
+		total_sum += remainder ** 2
+	return total_sum
 
 
 def happy(n: int) -> bool:
@@ -27,7 +28,7 @@ def happy(n: int) -> bool:
 
 
 @performance_print.last
-def calculate_naive() -> List:
+def calculate_naive() -> list[int]:
 	happy_list = []
 	count = 1
 	while len(happy_list) < LENLIST:
@@ -37,8 +38,8 @@ def calculate_naive() -> List:
 	return happy_list
 
 
-@performance_print.all
-def calculate_smart() -> List:
+@performance_print.last
+def calculate_smart() -> list[int]:
 	happy_set = {1}
 	sad_set = {4}
 
@@ -64,7 +65,7 @@ def calculate_smart() -> List:
 
 	happy_list = []
 	count = 1
-	while len(happy_list) <= 99:
+	while count <= 99:
 		if happy_smart(count):
 			happy_list.append(count)
 		count += 1
