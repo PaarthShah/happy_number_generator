@@ -1,5 +1,3 @@
-from typing import List
-
 import performance_print
 
 LENLIST = 10_000
